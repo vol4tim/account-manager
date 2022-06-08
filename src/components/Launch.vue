@@ -43,7 +43,7 @@
       <div class="text-end">
         <button @click="save" class="btn btn-primary" :disabled="process">
           <i v-if="process" class="fa fa-ellipsis-h"></i>
-          Send
+          <template v-else>Send</template>
         </button>
       </div>
     </div>
@@ -86,11 +86,14 @@ export default {
           params: params
         };
         const hash = await addFile("launch", JSON.stringify(parameter));
+        const subscriber = robonomics.accountManager.account.address;
+        robonomics.accountManager.useSubscription(subscriber, this.sender);
         const tx = await robonomics.launch.send(
           this.address,
           utils.cidToHex(hash)
         );
         const resultTx = await robonomics.accountManager.signAndSend(tx);
+        robonomics.accountManager.setSender(subscriber);
         console.log(resultTx);
         this.process = false;
         this.message = `Saved to block ${resultTx.blockNumber}`;

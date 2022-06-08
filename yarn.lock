@@ -9750,10 +9750,10 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-robonomics-interface@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/robonomics-interface/-/robonomics-interface-0.2.1.tgz#e9c8a97852f7256833b1fcd5e25255ef4f72576a"
-  integrity sha512-PrIONzm1XaooIjyZchr4CyiA4+fUr3+on1HhMpHngzdlpPcGA3DRQ6Cch/+8t8RwehHm4sDMDqlAw1STbcmN5Q==
+robonomics-interface@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/robonomics-interface/-/robonomics-interface-0.2.2.tgz#86f24ed366c221fb1e5b3e9fcd920af4508926c1"
+  integrity sha512-Rs/RqX8McPN0Lud+HgVdCe5/eckn3i+cKN8Q+z2htIt9PKWFGkxE5ZtSg1vdn/z8hxw1VAYV4hfWXjdbyVcPTg==
   dependencies:
     cids "^1.1.9"
     multihashing-async "^2.1.4"

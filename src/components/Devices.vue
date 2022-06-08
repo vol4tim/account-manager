@@ -91,7 +91,7 @@
                   :disabled="!hasEdit || process"
                 >
                   <i v-if="process" class="fa fa-ellipsis-h"></i>
-                  Save
+                  <template v-else>Save</template>
                 </button>
               </td>
             </tr>
