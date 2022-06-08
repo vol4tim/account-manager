@@ -154,9 +154,9 @@ export default {
       return new Date(this.validUntil).toLocaleString();
     },
     isActive() {
-      if (this.subscription === null || Date.now() > this.validUntil) {
-        return false;
-      }
+      // if (this.subscription === null || Date.now() > this.validUntil) {
+      //   return false;
+      // }
       return true;
     }
   },
