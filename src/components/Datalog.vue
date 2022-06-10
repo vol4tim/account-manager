@@ -90,6 +90,10 @@ export default {
       return null;
     },
     validateUri() {
+      if (this.account) {
+        console.log(this.address, encodeAddress(this.address));
+        console.log(this.account.address, encodeAddress(this.account.address));
+      }
       if (
         this.account &&
         encodeAddress(this.address) === encodeAddress(this.account.address)
