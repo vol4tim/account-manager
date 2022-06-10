@@ -81,8 +81,16 @@ export default {
     account() {
       if (this.uri) {
         try {
-          const k = new Keyring({ type: "sr25519" });
-          return k.addFromUri(this.uri);
+          const k = new Keyring();
+          const a1 = k.addFromUri(this.uri, {}, "ed25519");
+          if (encodeAddress(this.address) === encodeAddress(a1.address)) {
+            return a1;
+          }
+          const a2 = k.addFromUri(this.uri, {}, "sr25519");
+          if (encodeAddress(this.address) === encodeAddress(a2.address)) {
+            return a2;
+          }
+          return a1;
         } catch (error) {
           console.log(error);
         }
@@ -91,6 +99,7 @@ export default {
     },
     validateUri() {
       if (this.account) {
+        console.log(this.account.type);
         console.log(this.address, encodeAddress(this.address));
         console.log(this.account.address, encodeAddress(this.account.address));
       }
