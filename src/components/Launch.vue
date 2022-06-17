@@ -68,7 +68,7 @@ export default {
     };
   },
   created() {
-    this.params.push({ name: "id", value: "" });
+    this.params.push({ name: "id", value: "entity_id" });
   },
   methods: {
     async save() {

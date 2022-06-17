@@ -8,6 +8,9 @@
         <router-link :to="{ name: 'main' }">Back</router-link>
       </div>
     </div>
+    <div v-if="isLoad" class="text-center">
+      <i class="fa fa-ellipsis-h"></i>
+    </div>
     <div v-if="log.length">
       <div class="card mt-4 mb-4">
         <div class="card-body">
@@ -25,34 +28,81 @@
       </div>
       <table class="table">
         <tbody>
-          <tr v-for="(item, key) in log" :key="key">
-            <td style="width: 150px">{{ item[0] }}</td>
-            <td class="text-left">
-              <div v-if="item[2] === null" :title="item[1]">
-                {{ item[1].substr(0, 5) }}...{{ item[1].substr(-5) }}
-              </div>
-              <div v-if="item[2] && item[3] === null" :title="item[2]">
-                {{ item[2].substr(0, 5) }}...{{ item[2].substr(-5) }}
-              </div>
-              <code v-if="item[3]"> {{ item[3] }} </code>
-            </td>
-            <td class="text-right" style="width: 100px">
-              <button
-                v-if="item[2] === null && item[1].substr(0, 2) === 'Qm'"
-                @click="readByIndex(key)"
-                class="btn btn-success"
-              >
-                read
-              </button>
-              <button
-                v-if="validateUri && item[2] && item[3] === null"
-                @click="decryptByIndex(key)"
-                class="btn btn-success"
-              >
-                decrypt
-              </button>
-            </td>
-          </tr>
+          <Pagination :size="5" :listData="log" :currentPage="currentPage">
+            <template v-slot:default="props">
+              <tr>
+                <td style="width: 150px">{{ props.item[0] }}</td>
+                <td class="text-left">
+                  <div v-if="props.item[2] === null" :title="props.item[1]">
+                    {{ props.item[1].substr(0, 5) }}...{{
+                      props.item[1].substr(-5)
+                    }}
+                  </div>
+                  <div
+                    v-if="props.item[2] && props.item[3] === null"
+                    :title="props.item[2]"
+                  >
+                    {{ props.item[2].substr(0, 5) }}...{{
+                      props.item[2].substr(-5)
+                    }}
+                  </div>
+                  <pre
+                    style="max-height: 200px"
+                  ><code v-if="props.item[3]"> {{ props.item[3] }} </code></pre>
+                </td>
+                <td class="text-right" style="width: 100px">
+                  <button
+                    v-if="
+                      props.item[2] === null &&
+                      props.item[1].substr(0, 2) === 'Qm'
+                    "
+                    @click="readByIndex(props.item[5])"
+                    class="btn btn-success"
+                    :disabled="props.item[4]"
+                  >
+                    <i v-if="props.item[4]" class="fa fa-ellipsis-h"></i>
+                    <template v-else>read</template>
+                  </button>
+                  <button
+                    v-if="
+                      validateUri && props.item[2] && props.item[3] === null
+                    "
+                    @click="decryptByIndex(props.item[5])"
+                    class="btn btn-success"
+                  >
+                    decrypt
+                  </button>
+                </td>
+              </tr>
+            </template>
+
+            <template v-slot:pagination="props">
+              <tr>
+                <td colspan="3" class="text-center">
+                  <button
+                    :disabled="props.pageNumber === 0"
+                    @click="prevPage"
+                    class="btn btn-info"
+                  >
+                    Previous
+                  </button>
+                  &nbsp;
+                  <b>
+                    {{ props.pageCount > 0 ? props.pageNumber + 1 : 0 }} /
+                    {{ props.pageCount }}
+                  </b>
+                  &nbsp;
+                  <button
+                    :disabled="props.pageNumber >= props.pageCount - 1"
+                    @click="nextPage"
+                    class="btn btn-info"
+                  >
+                    Next
+                  </button>
+                </td>
+              </tr>
+            </template>
+          </Pagination>
         </tbody>
       </table>
     </div>
@@ -65,13 +115,17 @@ const { Keyring } = require("@polkadot/keyring");
 const util = require("@polkadot/util");
 import { encodeAddress } from "@polkadot/util-crypto";
 import { catFile } from "../ipfs";
+import Pagination from "./Pagination";
 
 export default {
+  components: { Pagination },
   props: ["address"],
   data() {
     return {
+      isLoad: false,
       log: [],
-      uri: ""
+      uri: "",
+      currentPage: 0
     };
   },
   created() {
@@ -98,11 +152,6 @@ export default {
       return null;
     },
     validateUri() {
-      if (this.account) {
-        console.log(this.account.type);
-        console.log(this.address, encodeAddress(this.address));
-        console.log(this.account.address, encodeAddress(this.account.address));
-      }
       if (
         this.account &&
         encodeAddress(this.address) === encodeAddress(this.account.address)
@@ -113,27 +162,53 @@ export default {
     }
   },
   methods: {
+    nextPage() {
+      this.currentPage++;
+    },
+    prevPage() {
+      this.currentPage--;
+    },
+    handlePage(page) {
+      this.currentPage = page;
+    },
     async read() {
+      this.isLoad = true;
       const log = await robonomics.datalog.read(this.address);
-      this.log = log.map((item) => {
+      this.log = log.reverse().map((item, id) => {
         return [
           new Date(item[0].toNumber()).toLocaleString(),
           item[1].toHuman(),
           null,
-          null
+          null,
+          false,
+          id
         ];
       });
+      this.isLoad = false;
     },
     async readByIndex(i) {
+      this.log[i][4] = true;
       try {
         this.log[i][2] = await catFile(this.log[i][1]);
+        this.log[i][4] = false;
       } catch (error) {
         console.log(error);
+        this.readByIndex(i);
       }
     },
     decryptByIndex(i) {
       try {
-        this.log[i][3] = this.decrypt(this.log[i][2]);
+        const msg = this.decrypt(this.log[i][2]);
+        try {
+          this.log[i][3] = JSON.stringify(
+            JSON.parse(msg.replaceAll("None", "'None'").replaceAll("'", '"')),
+            null,
+            4
+          );
+        } catch (error) {
+          console.log(error);
+          this.log[i][3] = msg;
+        }
       } catch (error) {
         console.log(error);
       }
