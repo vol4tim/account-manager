@@ -42,7 +42,7 @@
               <td class="text-end">
                 <div class="btn-group" role="group">
                   <button
-                    v-if="ha !== device.address"
+                    v-if="ha !== device.address && device.saved"
                     @click="launch(device.address)"
                     class="btn btn-primary"
                     :disabled="ha === null"
@@ -50,6 +50,7 @@
                     <i class="fa fa-send"></i>
                   </button>
                   <button
+                    v-if="device.saved"
                     @click="setHa(device.address)"
                     class="btn btn-info"
                     :disabled="ha === device.address"
@@ -186,7 +187,8 @@ export default {
       const devices = await robonomics.rws.getDevices(this.owner);
       this.devices = devices.map((item) => {
         return {
-          address: item.toHuman()
+          address: item.toHuman(),
+          saved: true
         };
       });
     },
@@ -231,7 +233,8 @@ export default {
         )[0]
       ) {
         this.devices.push({
-          address: this.newDeviceAddress
+          address: this.newDeviceAddress,
+          saved: false
         });
         this.newDeviceAddress = "";
         this.hasEdit = true;
