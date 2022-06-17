@@ -75,6 +75,7 @@ export default {
       this.message = null;
       this.error = null;
       this.process = true;
+      const subscriber = robonomics.accountManager.account.address;
       try {
         const params = {};
         for (const item of this.params) {
@@ -86,14 +87,15 @@ export default {
           params: params
         };
         const hash = await addFile("launch", JSON.stringify(parameter));
-        const subscriber = robonomics.accountManager.account.address;
+        console.log("subscription", subscriber);
+        console.log("sender", this.sender);
         robonomics.accountManager.useSubscription(subscriber, this.sender);
+        console.log("signer", robonomics.accountManager.account.address);
         const tx = await robonomics.launch.send(
           this.address,
           utils.cidToHex(hash)
         );
         const resultTx = await robonomics.accountManager.signAndSend(tx);
-        robonomics.accountManager.setSender(subscriber);
         console.log(resultTx);
         this.process = false;
         this.message = `Saved to block ${resultTx.blockNumber}`;
@@ -102,6 +104,7 @@ export default {
         this.error = e.message;
         this.process = false;
       }
+      robonomics.accountManager.setSender(subscriber);
     },
     addParam() {
       this.params.push({ name: "", value: "" });
