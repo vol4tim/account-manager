@@ -98,7 +98,7 @@ import robonomics from "../robonomics";
 import { addFile } from "../ipfs";
 import { Keyring } from "@polkadot/keyring";
 import { u8aToHex } from "@polkadot/util";
-import { encodeAddress } from "@polkadot/util-crypto";
+import { encodeAddress, decodeAddress } from "@polkadot/util-crypto";
 
 export default {
   props: ["address", "sender"],
@@ -118,16 +118,16 @@ export default {
     account() {
       if (this.uri) {
         try {
-          console.log(this.address);
           const k = new Keyring();
           const a1 = k.addFromUri(this.uri, {}, "ed25519");
-          console.log(encodeAddress(this.address), encodeAddress(a1.address));
-          if (encodeAddress(this.address) === encodeAddress(a1.address)) {
+          console.log(this.sender);
+          console.log(encodeAddress(this.sender), encodeAddress(a1.address));
+          if (encodeAddress(this.sender) === encodeAddress(a1.address)) {
             return a1;
           }
           const a2 = k.addFromUri(this.uri, {}, "sr25519");
-          console.log(encodeAddress(this.address), encodeAddress(a2.address));
-          if (encodeAddress(this.address) === encodeAddress(a2.address)) {
+          console.log(encodeAddress(this.sender), encodeAddress(a2.address));
+          if (encodeAddress(this.sender) === encodeAddress(a2.address)) {
             return a2;
           }
           return a1;
@@ -140,7 +140,7 @@ export default {
     validateUri() {
       if (
         this.account &&
-        encodeAddress(this.address) === encodeAddress(this.account.address)
+        encodeAddress(this.sender) === encodeAddress(this.account.address)
       ) {
         return true;
       }
@@ -218,7 +218,7 @@ export default {
     encrypt(message) {
       const encryptMessage = this.account.encryptMessage(
         message,
-        this.account.publicKey
+        u8aToHex(decodeAddress(this.address))
       );
       return u8aToHex(encryptMessage);
     }
