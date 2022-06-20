@@ -200,11 +200,7 @@ export default {
       try {
         const msg = this.decrypt(this.log[i][2]);
         try {
-          this.log[i][3] = JSON.stringify(
-            JSON.parse(msg.replaceAll("None", "'None'").replaceAll("'", '"')),
-            null,
-            4
-          );
+          this.log[i][3] = JSON.stringify(JSON.parse(msg), null, 4);
         } catch (error) {
           console.log(error);
           this.log[i][3] = msg;
