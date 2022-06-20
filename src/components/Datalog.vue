@@ -111,8 +111,8 @@
 
 <script>
 import robonomics from "../robonomics";
-const { Keyring } = require("@polkadot/keyring");
-const util = require("@polkadot/util");
+import { Keyring } from "@polkadot/keyring";
+import { u8aToString } from "@polkadot/util";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { catFile } from "../ipfs";
 import Pagination from "./Pagination";
@@ -218,7 +218,7 @@ export default {
         encryptMessage,
         this.account.publicKey
       );
-      return util.u8aToString(decryptMessage);
+      return u8aToString(decryptMessage);
     }
   }
 };
