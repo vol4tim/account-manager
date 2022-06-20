@@ -187,7 +187,7 @@ export default {
       try {
         let msg = this.getParameter();
         if (this.isCrypto && this.validateUri) {
-          msg = this.encryptMessage();
+          msg = this.encryptMessage;
         }
         const hash = await addFile("launch", msg);
         console.log("subscription", subscriber);
