@@ -42,7 +42,7 @@
               <td class="text-end">
                 <div class="btn-group" role="group">
                   <button
-                    v-if="ha !== device.address && device.saved"
+                    v-if="device.saved"
                     @click="launch(device.address)"
                     class="btn btn-primary"
                     :disabled="ha === null"
