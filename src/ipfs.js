@@ -14,6 +14,24 @@ export async function addFile(name, content) {
   if (node === null) {
     throw new Error("ipfs not initialized");
   }
+
+  try {
+    const formdata = new FormData();
+    formdata.append("file", content);
+
+    const result = await axios.post(
+      `https://ipfs.infura.io:5001/api/v0/adds`,
+      formdata,
+      {
+        headers: { "Content-Type": "multipart/form-data" }
+      }
+    );
+
+    console.log("infura add file", result.data.Hash);
+  } catch (error) {
+    console.log(error);
+  }
+
   const fileToAdd = {
     path: name,
     content: content
