@@ -1,110 +1,130 @@
 <template>
-  <div>
-    <div class="card mb-4">
-      <div class="card-body">
-        <h4 class="card-title">Your subscription</h4>
-        <div v-if="!isActive">Not active</div>
-        <div v-else>
-          <div>
-            <b>{{ countMonth }} Month</b>
-          </div>
-          <div>Active till: {{ validUntilFormat }}</div>
-        </div>
-      </div>
-    </div>
-    <div v-if="isActive">
-      <h3>Your accounts</h3>
-      <div class="table-responsive">
-        <table class="table">
-          <tbody>
-            <tr v-for="(device, i) in devices" :key="i">
-              <td scope="row">
-                <router-link
-                  v-if="ha === device.address"
-                  :to="{ name: 'datalog', params: { address: device.address } }"
-                >
-                  <span class="d-lg-none">
-                    {{ device.address.substr(0, 5) }}...{{
-                      device.address.substr(-5)
-                    }}
-                  </span>
-                  <span class="d-none d-lg-block">{{ device.address }}</span>
-                </router-link>
-                <template v-else>
-                  <span class="d-lg-none">
-                    {{ device.address.substr(0, 5) }}...{{
-                      device.address.substr(-5)
-                    }}
-                  </span>
-                  <span class="d-none d-lg-block">{{ device.address }}</span>
-                </template>
-              </td>
-              <td class="text-end">
-                <div class="btn-group" role="group">
-                  <button
-                    v-if="device.saved"
-                    @click="launch(device.address)"
-                    class="btn btn-primary"
-                    :disabled="ha === null"
-                  >
-                    <i class="fa fa-send"></i>
-                  </button>
-                  <button
-                    v-if="device.saved"
-                    @click="setHa(device.address)"
-                    class="btn btn-info"
-                    :disabled="ha === device.address"
-                  >
-                    <i
-                      class="fa"
-                      :class="[ha === device.address ? 'fa-star' : 'fa-star-o']"
-                    ></i>
-                  </button>
-                  <button
-                    @click="remove(device.address)"
-                    class="btn btn-danger"
-                  >
-                    <i class="fa fa-remove"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <input
-                  v-model="newDeviceAddress"
-                  placeholder="Address"
-                  class="form-control"
-                  :class="{ error: err }"
-                />
-              </td>
-              <td class="text-end">
-                <button @click="add" class="btn btn-success">
-                  <span class="fa fa-plus"></span>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2" class="text-end">
-                <button
-                  @click="save"
-                  class="btn btn-primary"
-                  :disabled="!hasEdit || process"
-                >
-                  <i v-if="process" class="fa fa-ellipsis-h"></i>
-                  <template v-else>Save</template>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <robo-layout screen footer>
+    <robo-card outlined>
+      <robo-list fullLine>
+        <robo-list-item>
+          <robo-card-title size="3">Your subscription</robo-card-title>
+          <template v-if="!isActive">Not active</template>
+          <template v-else>
+            <div>
+              <b>{{ countMonth }} Month</b>
+            </div>
+            <div>Active till: {{ validUntilFormat }}</div>
+          </template>
+        </robo-list-item>
+      </robo-list>
+    </robo-card>
+    <robo-card outlined>
+      <robo-list fullLine>
+        <robo-list-item>
+          <template v-if="isActive">
+            <robo-card-title size="3">Your accounts</robo-card-title>
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr v-for="(device, i) in devices" :key="i">
+                    <td scope="row">
+                      <router-link
+                        v-if="ha === device.address"
+                        :to="{ name: 'datalog', params: { address: device.address } }"
+                      >
+                        <span class="d-lg-none">
+                          {{ device.address.substr(0, 5) }}...{{
+                            device.address.substr(-5)
+                          }}
+                        </span>
+                        <span class="d-none d-lg-block">{{ device.address }}</span>
+                      </router-link>
+                      <template v-else>
+                        <span class="d-lg-none">
+                          {{ device.address.substr(0, 5) }}...{{
+                            device.address.substr(-5)
+                          }}
+                        </span>
+                        <span class="d-none d-lg-block">{{ device.address }}</span>
+                      </template>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group" role="group">
+                        <robo-button
+                          v-if="device.saved"
+                          @click="launch(device.address)"
+                          size="small"
+                          iconRight="circle-info"
+                          class="btn btn-primary"
+                          :disabled="ha === null"
+                        >
+                          <i class="fa fa-send"></i>
+                        </robo-button>
+                        <robo-button
+                          v-if="device.saved"
+                          @click="setHa(device.address)"
+                          class="btn btn-info"
+                          size="small"
+                          type="ok" 
+                          iconRight="circle-check"
+                          :disabled="ha === device.address"
+                        >
+                          <i
+                            class="fa"
+                            :class="[ha === device.address ? 'fa-star' : 'fa-star-o']"
+                          ></i>
+                        </robo-button>
+                        <robo-button
+                          @click="remove(device.address)"
+                          class="btn btn-danger"
+                          size="small"
+                          type="alarm" 
+                          iconRight="circle-xmark"
+                        >
+                          <i class="fa fa-remove"></i>
+                        </robo-button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <robo-input
+                        v-model="newDeviceAddress"
+                        placeholder="Address"
+                        :class="{ error: err }"
+                      />
+                    </td>
+                    <td class="text-end">
+                      <robo-button 
+                      @click="add" 
+                      class="btn btn-primary"
+                      size="small"
+                      iconRight="plus"
+                    >
+                        <span class="fa fa-plus"></span>
+                      </robo-button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="text-end">
+                      <robo-button
+                        @click="save"
+                        class="btn btn-primary"
+                        :disabled="!hasEdit || process"
+                      >
+                        <i v-if="process" class="fa fa-ellipsis-h"></i>
+                        <template v-else>Save</template>
+                      </robo-button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-      <div v-if="error" class="alert alert-danger">
-        {{ error }}
-      </div>
-    </div>
-  </div>
+            <div v-if="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+          </template>
+        </robo-list-item>
+      </robo-list>
+    </robo-card>
+  </robo-layout>
 </template>
 
 <script>
