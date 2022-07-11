@@ -10,14 +10,21 @@
               :key="key"
               :value="account.address"
             >
-              {{ account.meta.isTesting ? "dev" : "" }} {{ account.meta.name }} |
+              {{ account.meta.isTesting ? "dev" : "" }}
+              {{ account.meta.name }} |
               {{ account.meta?.source }}
             </option>
           </select>
           <br />
-          {{ account }} | {{ balancePrint }}
+          <robo-account-polkadot extensionAllowShift inline short />
         </template>
-        <robo-button size="small" v-else @click="connect" class="btn btn-default">connect</robo-button>
+        <robo-button
+          size="small"
+          v-else
+          @click="connect"
+          class="btn btn-default"
+          >connect</robo-button
+        >
         <p v-if="error" class="alert alert-danger">{{ error }}</p>
       </robo-list-item>
     </robo-list>

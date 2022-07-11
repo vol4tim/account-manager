@@ -1,19 +1,15 @@
 <template>
   <robo-layout screen footer>
-    <robo-card  >
-      <robo-card-title size="3">Launch</robo-card-title>
-      <div>
+    <robo-card>
+      <robo-grid class="example" gap="x05" columnsRepeat="1">
+        <robo-card-title size="3">Launch</robo-card-title>
         <robo-text size="normal" weight="bold">
           <label for="platform" class="form-label">Platform</label>
-          <robo-input
-            id="platform"
-            v-model="platform"
-            placeholder=""
-          />
+          <robo-input id="platform" v-model="platform" placeholder="" />
         </robo-text>
         <robo-text size="normal" weight="bold">
           <label for="name" class="form-label">Name</label>
-          <robo-input id="name" v-model="name" placeholder=""/>
+          <robo-input id="name" v-model="name" placeholder="" />
         </robo-text>
 
         <h5>Params</h5>
@@ -48,7 +44,11 @@
                     type="checkbox"
                     id="isCrypto"
                   />
-                  <robo-card-label-section class="form-check-label" for="isCrypto">crypto</robo-card-label-section>
+                  <robo-card-label-section
+                    class="form-check-label"
+                    for="isCrypto"
+                    >crypto</robo-card-label-section
+                  >
                 </div>
               </div>
             </div>
@@ -75,7 +75,9 @@
           </div>
         </robo-text>
 
-        <template v-if="message" class="alert alert-info">{{ message }}</template>
+        <template v-if="message" class="alert alert-info">{{
+          message
+        }}</template>
         <template v-if="error" class="alert alert-danger">{{ error }}</template>
 
         <div class="text-end">
@@ -88,7 +90,7 @@
             <template v-else>Send</template>
           </robo-button>
         </div>
-      </div>
+      </robo-grid>
     </robo-card>
   </robo-layout>
 </template>
