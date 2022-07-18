@@ -40,6 +40,11 @@ export default {
   background: #fff;
   width: 600px;
 }
+.modal__content {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 500px;
+}
 .modal__close {
   position: absolute;
   top: 0.5rem;
