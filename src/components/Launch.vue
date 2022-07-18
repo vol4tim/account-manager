@@ -1,95 +1,98 @@
 <template>
-  <div>
-    <h4>Launch</h4>
-    <div>
-      <div class="mb-3">
-        <label for="platform" class="form-label">Platform</label>
-        <input
-          id="platform"
-          v-model="platform"
-          placeholder=""
-          class="form-control"
-        />
-      </div>
-      <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input id="name" v-model="name" placeholder="" class="form-control" />
-      </div>
+  <robo-layout screen footer>
+    <robo-card>
+      <robo-grid class="example" gap="x05" columnsRepeat="1">
+        <robo-card-title size="3">Launch</robo-card-title>
+        <robo-text size="normal" weight="bold">
+          <label for="platform" class="form-label">Platform</label>
+          <robo-input id="platform" v-model="platform" placeholder="" />
+        </robo-text>
+        <robo-text size="normal" weight="bold">
+          <label for="name" class="form-label">Name</label>
+          <robo-input id="name" v-model="name" placeholder="" />
+        </robo-text>
 
-      <h5>Params</h5>
-      <div class="input-group mb-3" v-for="(item, key) in params" :key="key">
-        <span class="input-group-text">Name</span>
-        <input v-model="item.name" class="form-control" />
-        <span class="input-group-text">Value</span>
-        <input v-model="item.value" class="form-control" />
-        <button
-          @click="removeParam(key)"
-          class="btn btn-danger"
-          :disabled="key === 0"
-        >
-          <i class="fa fa-remove"></i>
-        </button>
-      </div>
+        <h5>Params</h5>
+        <div class="input-group mb-3" v-for="(item, key) in params" :key="key">
+          <span class="input-group-text">Name</span>
+          <input v-model="item.name" class="form-control" />
+          <span class="input-group-text">Value</span>
+          <input v-model="item.value" class="form-control" />
+          <button
+            @click="removeParam(key)"
+            class="btn btn-danger"
+            :disabled="key === 0"
+          >
+            <i class="fa fa-remove"></i>
+          </button>
+        </div>
 
-      <div class="text-end mb-3">
-        <button @click="addParam" class="btn btn-success">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
+        <div class="text-end mb-3">
+          <button @click="addParam" class="btn btn-success">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
 
-      <div class="mb-3">
-        <div class="container">
-          <div class="row justify-content-md-end">
-            <div class="col-md-2">
-              <div class="form-check">
-                <input
-                  v-model="isCrypto"
-                  class="form-check-input"
-                  type="checkbox"
-                  id="isCrypto"
-                />
-                <label class="form-check-label" for="isCrypto">crypto</label>
+        <robo-text size="normal" weight="bold">
+          <div class="container">
+            <div class="row justify-content-md-end">
+              <div class="col-md-2">
+                <div class="form-check">
+                  <input
+                    v-model="isCrypto"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="isCrypto"
+                  />
+                  <robo-card-label-section
+                    class="form-check-label"
+                    for="isCrypto"
+                    >crypto</robo-card-label-section
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div v-if="isCrypto">
-          <h5 class="card-title">Your secret key for crypt message</h5>
-          <input
-            v-model="uri"
-            type="password"
-            class="form-control"
-            placeholder="secret"
-          />
-          <div v-if="!validateUri" class="alert alert-warning mt-2">
-            Input your secret key
+          <div v-if="isCrypto">
+            <h5 class="card-title">Your secret key for crypt message</h5>
+            <input
+              v-model="uri"
+              type="password"
+              class="form-control"
+              placeholder="secret"
+            />
+            <div v-if="!validateUri" class="alert alert-warning mt-2">
+              Input your secret key
+            </div>
+
+            <input
+              v-if="validateUri"
+              v-model="encryptMessage"
+              class="form-control"
+              disabled
+            />
           </div>
+        </robo-text>
 
-          <input
-            v-if="validateUri"
-            v-model="encryptMessage"
-            class="form-control"
-            disabled
-          />
+        <template v-if="message" class="alert alert-info">{{
+          message
+        }}</template>
+        <template v-if="error" class="alert alert-danger">{{ error }}</template>
+
+        <div class="text-end">
+          <robo-button
+            @click="save"
+            class="btn btn-primary"
+            :disabled="process || !canSend"
+          >
+            <i v-if="process" class="fa fa-ellipsis-h"></i>
+            <template v-else>Send</template>
+          </robo-button>
         </div>
-      </div>
-
-      <div v-if="message" class="alert alert-info">{{ message }}</div>
-      <div v-if="error" class="alert alert-danger">{{ error }}</div>
-
-      <div class="text-end">
-        <button
-          @click="save"
-          class="btn btn-primary"
-          :disabled="process || !canSend"
-        >
-          <i v-if="process" class="fa fa-ellipsis-h"></i>
-          <template v-else>Send</template>
-        </button>
-      </div>
-    </div>
-  </div>
+      </robo-grid>
+    </robo-card>
+  </robo-layout>
 </template>
 
 <script>

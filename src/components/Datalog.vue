@@ -1,112 +1,113 @@
 <template>
-  <div class="mt-4">
-    <div class="row">
-      <div class="col-md-6">
-        <h3>Datalog</h3>
-      </div>
-      <div class="col-md-6 text-end pt-2">
-        <router-link :to="{ name: 'main' }">Back</router-link>
-      </div>
-    </div>
-    <div v-if="isLoad" class="text-center">
-      <i class="fa fa-ellipsis-h"></i>
-    </div>
-    <div v-if="log.length">
-      <div class="card mt-4 mb-4">
-        <div class="card-body">
-          <h4 class="card-title">Your secret key for decrypt message</h4>
-          <input
-            v-model="uri"
-            type="password"
-            class="form-control"
-            placeholder="secret"
-          />
+  <robo-layout screen footer>
+    <robo-grid class="example" gap="x1" columnsRepeat="1">
+      <robo-card outlined>
+        <div class="row">
+          <div class="col-md-6">
+            <h3>Datalog</h3>
+          </div>
+          <div class="col-md-6 text-end pt-2">
+            <router-link :to="{ name: 'main' }">Back</router-link>
+          </div>
+        </div>
+      </robo-card>
+      <template v-if="isLoad" class="text-center">
+        <i class="fa fa-ellipsis-h"></i>
+      </template>
+      <div v-if="log.length">
+        <robo-card outlined>
+          <robo-card-title size="3"
+            >Your secret key for decrypt message</robo-card-title
+          >
+          <robo-input v-model="uri" type="password" placeholder="secret" />
           <div v-if="!validateUri" class="alert alert-warning mt-2">
             Input your secret key
           </div>
-        </div>
+        </robo-card>
       </div>
-      <table class="table">
-        <tbody>
-          <Pagination :size="5" :listData="log" :currentPage="currentPage">
-            <template v-slot:default="props">
-              <tr>
-                <td style="width: 150px">{{ props.item[0] }}</td>
-                <td class="text-left">
-                  <div v-if="props.item[2] === null" :title="props.item[1]">
-                    {{ props.item[1].substr(0, 5) }}...{{
-                      props.item[1].substr(-5)
-                    }}
-                  </div>
-                  <div
-                    v-if="props.item[2] && props.item[3] === null"
-                    :title="props.item[2]"
-                  >
-                    {{ props.item[2].substr(0, 5) }}...{{
-                      props.item[2].substr(-5)
-                    }}
-                  </div>
-                  <pre
-                    style="max-height: 200px"
-                  ><code v-if="props.item[3]"> {{ props.item[3] }} </code></pre>
-                </td>
-                <td class="text-right" style="width: 100px">
-                  <button
-                    v-if="
-                      props.item[2] === null &&
-                      props.item[1].substr(0, 2) === 'Qm'
-                    "
-                    @click="readByIndex(props.item[5])"
-                    class="btn btn-success"
-                    :disabled="props.item[4]"
-                  >
-                    <i v-if="props.item[4]" class="fa fa-ellipsis-h"></i>
-                    <template v-else>read</template>
-                  </button>
-                  <button
-                    v-if="
-                      validateUri && props.item[2] && props.item[3] === null
-                    "
-                    @click="decryptByIndex(props.item[5])"
-                    class="btn btn-success"
-                  >
-                    decrypt
-                  </button>
-                </td>
-              </tr>
-            </template>
+      <robo-card outlined>
+        <table class="table">
+          <tbody>
+            <Pagination :size="5" :listData="log" :currentPage="currentPage">
+              <template v-slot:default="props">
+                <tr>
+                  <td style="width: 150px">{{ props.item[0] }}</td>
+                  <td class="text-left">
+                    <div v-if="props.item[2] === null" :title="props.item[1]">
+                      {{ props.item[1].substr(0, 5) }}...{{
+                        props.item[1].substr(-5)
+                      }}
+                    </div>
+                    <div
+                      v-if="props.item[2] && props.item[3] === null"
+                      :title="props.item[2]"
+                    >
+                      {{ props.item[2].substr(0, 5) }}...{{
+                        props.item[2].substr(-5)
+                      }}
+                    </div>
+                    <pre
+                      style="max-height: 200px"
+                    ><code v-if="props.item[3]"> {{ props.item[3] }} </code></pre>
+                  </td>
+                  <td class="text-right" style="width: 100px">
+                    <robo-button
+                      v-if="
+                        props.item[2] === null &&
+                        props.item[1].substr(0, 2) === 'Qm'
+                      "
+                      @click="readByIndex(props.item[5])"
+                      class="btn btn-success"
+                      :disabled="props.item[4]"
+                    >
+                      <i v-if="props.item[4]" class="fa fa-ellipsis-h"></i>
+                      <template v-else>read</template>
+                    </robo-button>
+                    <robo-button
+                      v-if="
+                        validateUri && props.item[2] && props.item[3] === null
+                      "
+                      @click="decryptByIndex(props.item[5])"
+                      class="btn btn-success"
+                    >
+                      decrypt
+                    </robo-button>
+                  </td>
+                </tr>
+              </template>
 
-            <template v-slot:pagination="props">
-              <tr>
-                <td colspan="3" class="text-center">
-                  <button
-                    :disabled="props.pageNumber === 0"
-                    @click="prevPage"
-                    class="btn btn-info"
-                  >
-                    Previous
-                  </button>
-                  &nbsp;
-                  <b>
-                    {{ props.pageCount > 0 ? props.pageNumber + 1 : 0 }} /
-                    {{ props.pageCount }}
-                  </b>
-                  &nbsp;
-                  <button
-                    :disabled="props.pageNumber >= props.pageCount - 1"
-                    @click="nextPage"
-                    class="btn btn-info"
-                  >
-                    Next
-                  </button>
-                </td>
-              </tr>
-            </template>
-          </Pagination>
-        </tbody>
-      </table>
-    </div>
-  </div>
+              <template v-slot:pagination="props">
+                <tr>
+                  <td colspan="3" class="text-center">
+                    <robo-button
+                      :disabled="props.pageNumber === 0"
+                      @click="prevPage"
+                      class="btn btn-info"
+                    >
+                      Previous
+                    </robo-button>
+                    &nbsp;
+                    <b>
+                      {{ props.pageCount > 0 ? props.pageNumber + 1 : 0 }} /
+                      {{ props.pageCount }}
+                    </b>
+                    &nbsp;
+                    <robo-button
+                      :disabled="props.pageNumber >= props.pageCount - 1"
+                      @click="nextPage"
+                      class="btn btn-info"
+                    >
+                      Next
+                    </robo-button>
+                  </td>
+                </tr>
+              </template>
+            </Pagination>
+          </tbody>
+        </table>
+      </robo-card>
+    </robo-grid>
+  </robo-layout>
 </template>
 
 <script>

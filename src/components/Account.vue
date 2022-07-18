@@ -1,25 +1,34 @@
 <template>
-  <div class="card mb-2">
-    <div class="card-body">
-      <h4 class="card-heading">Account</h4>
-      <template v-if="isReady">
-        <select v-model="account" class="form-select">
-          <option
-            v-for="(account, key) in accounts"
-            :key="key"
-            :value="account.address"
-          >
-            {{ account.meta.isTesting ? "dev" : "" }} {{ account.meta.name }} |
-            {{ account.meta?.source }}
-          </option>
-        </select>
-        <br />
-        {{ account }} | {{ balancePrint }}
-      </template>
-      <button v-else @click="connect" class="btn btn-default">connect</button>
-      <p v-if="error" class="alert alert-danger">{{ error }}</p>
-    </div>
-  </div>
+  <robo-card outlined>
+    <robo-list fullLine>
+      <robo-list-item>
+        <robo-card-title size="3">Account</robo-card-title>
+        <template v-if="isReady">
+          <select v-model="account" class="form-select">
+            <option
+              v-for="(account, key) in accounts"
+              :key="key"
+              :value="account.address"
+            >
+              {{ account.meta.isTesting ? "dev" : "" }}
+              {{ account.meta.name }} |
+              {{ account.meta?.source }}
+            </option>
+          </select>
+          <br />
+          <robo-account-polkadot extensionAllowShift inline short />
+        </template>
+        <robo-button
+          size="small"
+          v-else
+          @click="connect"
+          class="btn btn-default"
+          >connect</robo-button
+        >
+        <p v-if="error" class="alert alert-danger">{{ error }}</p>
+      </robo-list-item>
+    </robo-list>
+  </robo-card>
 </template>
 
 <script>
