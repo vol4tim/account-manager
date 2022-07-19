@@ -126,11 +126,31 @@ export default {
       isLoad: false,
       log: [],
       uri: "",
-      currentPage: 0
+      currentPage: 0,
+      unsubscribe: null
     };
   },
-  created() {
-    this.read();
+  async created() {
+    await this.read();
+    this.unsubscribe = await robonomics.datalog.on({}, (result) => {
+      result
+        .filter((item) => item.account.toHuman() === this.address)
+        .forEach((item) => {
+          this.log.unshift([
+            new Date(item.moment.toNumber()).toLocaleString(),
+            item.data.toHuman(),
+            null,
+            null,
+            false,
+            this.log.length + 2
+          ]);
+        });
+    });
+  },
+  unmounted() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
   computed: {
     account() {
